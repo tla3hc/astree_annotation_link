@@ -63,6 +63,18 @@ class AnnotationLinker:
         logging.debug(self.m_class_name, "Getting alarm comment position")
         return alarm["alarm_comment_pos"]
     
+    def get_alarm_data(self, alarm):
+        logging.debug(self.m_class_name, "Getting alarm data")
+        return alarm["data"]
+
+    def replace_comment(self, alarm, old_comment, old_classification):
+        logging.debug(self.m_class_name, "Replacing comment")
+        alarm_data = self.get_alarm_data(alarm)
+        alarm_data = alarm_data.replace('undecided', old_classification)
+        alarm_data = alarm_data.replace(', \"\",',  f', \"{old_comment}",')
+        return alarm_data
+        
+    
     def _link_rulecheck_alarm(self, old_alarm):   
         """2 rule check alarm are ment to be the same if
         - they have the same alarm type
@@ -86,12 +98,15 @@ class AnnotationLinker:
                 self.get_alarm_start_col(new_alarm) == alarm_start_col and \
                 self.get_alarm_end_col(new_alarm) == alarm_end_col and \
                 self.get_alarm_comment_pos(new_alarm) == alarm_comment_pos:
-                logging.info(self.m_class_name, f"Linking rulecheck alarm {old_alarm} to {new_alarm}")
-                logging.info(self.m_class_name, f"Alarm shifted: {alarm_start_line} - {self.get_alarm_start_line(new_alarm)}")
-        
-        
+                logging.debug(self.m_class_name, f"Linking rulecheck alarm {old_alarm} to {new_alarm}")
+                logging.debug(self.m_class_name, f"Alarm shifted: {alarm_start_line} - {self.get_alarm_start_line(new_alarm)}")
+                new_aal = self.replace_comment(new_alarm, self.get_alarm_comment(old_alarm), self.get_alarm_classification(old_alarm))
+                return new_aal
+        return None
+            
     def link(self):
         try:
+            new_aals = []
             logging.debug(self.m_class_name, "Linking annotations")
             for alarm in self.m_old_annotation_json:
                 old_alarm = self.m_old_annotation_json[alarm]
@@ -99,7 +114,10 @@ class AnnotationLinker:
                     continue
                 alarm_type = self.get_alarm_type(old_alarm).strip()
                 if alarm_type in self.m_config["rule_check_list"]:
-                    self._link_rulecheck_alarm(old_alarm)
+                    new_aal = self._link_rulecheck_alarm(old_alarm)
+                    if new_aal:
+                        new_aals.append(new_aal)
+            return new_aals
         except Exception as e:  
             logging.error(self.m_class_name, f"Error linking annotations: {e}")
             raise

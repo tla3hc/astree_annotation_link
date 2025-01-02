@@ -56,4 +56,5 @@ from utils.aal_utils.link_annotation import AnnotationLinker
 old_annotation = json_utils.load_json(r'C:\Users\trand\Desktop\PJ_A\adapt_aal\uss_1710_alarm.json')
 new_annotation = json_utils.load_json(r'C:\Users\trand\Desktop\PJ_A\adapt_aal\uss_1810_alarm.json')
 linker = AnnotationLinker(_config, old_annotation, new_annotation)
-linker.link()
+linked = linker.link()
+json_utils.save('linked.json', linked)
