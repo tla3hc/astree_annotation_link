@@ -1,5 +1,5 @@
 {
-    "log_level": "DEBUG",
+    "log_level": "INFO",
     "annotation_block_start": "__ASTREE_annotation((",
     "annotation_block_end": "));",
     "rule_check_list": [
@@ -8,5 +8,9 @@
         "check_max_expression_nesting",
         "check_parameter_name_match",
         "check_dead_assignment"
-    ]
+    ],
+    "check_failure_list": [
+        "check_failure"
+    ],
+    "output_folder": "output"
 }

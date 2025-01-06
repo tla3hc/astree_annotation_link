@@ -13,8 +13,9 @@ class AnnotationExtractor:
     def validate(self, annotation: str):
         logging.debug(self.m_class_name, "Validating annotation")
         if "__ASTREE_comment" not in annotation:
-            if "RULECHECKER_comment" not in annotation:
-                return False
+            return False
+            # if "RULECHECKER_comment" not in annotation:
+            #     return False
         if not annotation.endswith("*/"):
             return False
         return True
@@ -141,5 +142,5 @@ class AnnotationExtractor:
             return annotation_data
         except Exception as e:
             logging.error(self.m_class_name, f"Error: {e}")
-            return None
+            raise
         

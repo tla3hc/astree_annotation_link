@@ -30,6 +30,7 @@ class AnnotationReader:
     
     
     def read_annotation(self, annotation_file):
+        self.m_annotation = {}
         logging.debug(self.m_class_name, "Reading annotation file")
         if os.path.isfile(annotation_file):
             with open(annotation_file, 'r') as file:
